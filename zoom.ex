@@ -50,32 +50,16 @@ defmodule Zoom do
       below = below(original, parentx, parenty)
       right = right(original, parentx, parenty)
       left = left(original, parentx, parenty)
-      case { x, y } do
-        { 0, 0 } ->
-          if (above == "#" && left == "#") do
-            "#"
-          else
-            " "
-          end
-        { 0, 1 } ->
-          if (below == "#" && left == "#") do
-            "#"
-          else
-            " "
-          end
-        { 1, 0 } ->
-          if (above == "#" && right == "#") do
-            "#"
-          else
-            " "
-          end
-        { 1, 1 } ->
-          if (below == "#" && right == "#") do
-            "#"
-          else
-            " "
-          end
-        { _, _ } ->
+      case { x, y, above, below, left, right } do
+        { 0, 0, "#", _, "#", _ } ->
+          "#"
+        { 0, 1, _, "#", "#", _ } ->
+          "#"
+        { 1, 0, "#", _, _, "#" } ->
+          "#"
+        { 1, 1, _, "#", _, "#" } ->
+          "#"
+        _ ->
           " "
       end
     else
@@ -95,22 +79,21 @@ defmodule Zoom do
     round(Float.floor(coord / 2))
   end
 
-  def populate_blanks([ h | t ], original, x, y) do
-    [ populate_row(h, original, 0, y) | populate_blanks(t, original, 0, y + 1) ]
+  def populate_blanks([ h | t ], original, y) do
+    [ populate_row(h, original, 0, y) | populate_blanks(t, original, y + 1) ]
   end
 
-  def populate_blanks([], original, x, y) do
+  def populate_blanks([], _original, _y) do
     []
   end
 
-  def populate_row([ h | t ], original, x, y) do
-    parent = get_parent(original, x, y)
+  def populate_row([ _h | t ], original, x, y) do
     new_char = get_new_char(original, x, y)
     x = next_x(original, x)
     [ new_char | populate_row(t, original, x, y) ]
   end
 
-  def populate_row([], original, x, y) do
+  def populate_row([], _original, _x, _y) do
     []
   end
 
@@ -146,7 +129,7 @@ defmodule Zoom do
   def zoom(image) do
     image = split(image)
     blanks = expand_blank(image)
-    row_join(populate_blanks(blanks, image, 0, 0))
+    row_join(populate_blanks(blanks, image, 0))
   end
 end
 
