@@ -128,8 +128,9 @@ defmodule Zoom do
 
   def zoom(image) do
     image = split(image)
-    blanks = expand_blank(image)
-    row_join(populate_blanks(blanks, image, 0))
+    expand_blank(image)
+      |> populate_blanks(image, 0)
+      |> row_join
   end
 end
 
