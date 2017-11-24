@@ -1,23 +1,20 @@
 defmodule Zoom do
-  @h "#"
-  @s " "
-
   def above(image, x, y) do
-    from_coords(image, x, y+1)
-  end
-
-  def below(image, x, y) do
     from_coords(image, x, y-1)
   end
 
+  def below(image, x, y) do
+    from_coords(image, x, y+1)
+  end
+
   def get_parent(image, x, y) do
-    from_coords(image, round(Float.floor(x / 2)), round(Float.floor(y / 2)))
+    from_coords(image, parent(x), parent(y))
   end
 
   def expand_blank(image) do
     List.duplicate(
       List.duplicate(
-        @s,
+        " ",
         width(image) * 2
       ),
       height(image) * 2
@@ -25,58 +22,64 @@ defmodule Zoom do
   end
 
   def from_coords(image, x, y) do
-    case Enum.fetch(image, y) do
-      { :ok, row } ->
-        case Enum.fetch(row, x) do
-          { :ok, char } ->
-            char
-          :error ->
-            nil
-        end
-      :error ->
-        nil
+    if (x >= 0 && y >= 0 && x < width(image) && y < height(image) ) do
+      case Enum.fetch(image, y) do
+        { :ok, row } ->
+          case Enum.fetch(row, x) do
+            { :ok, char } ->
+              char
+            :error ->
+              " "
+          end
+        :error ->
+          " "
+      end
+    else
+      " "
     end
   end
 
-  def get_new_char(original, x, y) do
-    parentx = parent(x)
-    parenty = parent(y)
-    parent = get_parent(original, parentx, parenty)
-    if parent == @s do
-      x = rem(x, 2)
-      y = rem(y, 2)
+  def get_new_char(original, absx, absy) do
+    parentx = parent(absx)
+    parenty = parent(absy)
+    parent_char = get_parent(original, absx, absy)
+    if parent_char == " " do
+      x = rem(absx, 2)
+      y = rem(absy, 2)
       above = above(original, parentx, parenty)
       below = below(original, parentx, parenty)
       right = right(original, parentx, parenty)
       left = left(original, parentx, parenty)
       case { x, y } do
         { 0, 0 } ->
-          if (above == @h && left == @h) do
-            @h
+          if (above == "#" && left == "#") do
+            "#"
           else
-            @s
+            " "
           end
         { 0, 1 } ->
-          if (below == @h && left == @h) do
-            @h
+          if (below == "#" && left == "#") do
+            "#"
           else
-            @s
+            " "
           end
         { 1, 0 } ->
-          if (above == @h && right == @h) do
-            @h
+          if (above == "#" && right == "#") do
+            "#"
           else
-            @s
+            " "
           end
         { 1, 1 } ->
-          if (below == @h && right == @h) do
-            @h
+          if (below == "#" && right == "#") do
+            "#"
           else
-            @s
+            " "
           end
+        { _, _ } ->
+          " "
       end
     else
-      @h
+      "#"
     end
   end
 
@@ -89,7 +92,7 @@ defmodule Zoom do
   end
 
   def parent(coord) do
-    div(coord, 2)
+    round(Float.floor(coord / 2))
   end
 
   def populate_blanks([ h | t ], original, x, y) do
@@ -115,6 +118,14 @@ defmodule Zoom do
     from_coords(image, x+1, y)
   end
 
+  def row_join([ h | t ]) do
+    [ Enum.join(h) | row_join(t) ]
+  end
+
+  def row_join([]) do
+    []
+  end
+
   def split([ h | t ]) do
     [ String.split(h, ~r//, trim: true) | split(t) ]
   end
@@ -135,15 +146,13 @@ defmodule Zoom do
   def zoom(image) do
     image = split(image)
     blanks = expand_blank(image)
-    populate_blanks(blanks, image, 0, 0)
+    row_join(populate_blanks(blanks, image, 0, 0))
   end
 end
 
 test1 = [
-  "   ",
-  "  #",
-  " # ",
-  "   "
+  "# ",
+  " #"
 ]
 
 IO.inspect Zoom.zoom(test1)
