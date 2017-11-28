@@ -1,8 +1,18 @@
 require IEx
 
 defmodule StringColumns do
+  def new_row(columns, index) do
+    [ col1, col2, col3 ] = columns
+    col1_word = Enum.at(col1, index)
+    col2_word = Enum.at(col2, index)
+    col3_word = Enum.at(col3, index)
+    new_row = [ col1_word, col2_word, col3_word ]
+    new_row = Enum.filter(new_row, & !is_nil(&1))
+  end
+
   def num_rows(sorted) do
-    length(sorted)/3
+    row_float = length(sorted) / 3
+    row_float
       |> Float.ceil
       |> round
   end
@@ -34,7 +44,7 @@ defmodule StringColumns do
       new_row = [ col1_word, col2_word, col3_word ]
       new_row = Enum.filter(new_row, & !is_nil(&1))
       output = List.insert_at(output, current_row_idx, new_row)
-      rotate(columns, num_rows, current_row_idx+1, output)
+      rotate(columns, num_rows, current_row_idx + 1, output)
     else
       output
     end
@@ -46,17 +56,19 @@ defmodule StringColumns do
       |> String.split(" ")
       |> Enum.sort
 
-    if length(sorted) == 4 do
-      [ a, b, c, d ] = sorted
-      "#{a} #{c} #{d}\n#{b}"
-    else
-      case num_rows(sorted) do
-        1 -> Enum.join(sorted, " ")
-        x ->
-          columns = Enum.chunk_every(sorted, num_rows(sorted))
-          rows = rotate(columns, num_rows(sorted), 0, [])
-          reconstruct(rows)
-      end
+    num_rows = num_rows(sorted)
+
+    cond do
+      length(sorted) == 4 ->
+        [ a, b, c, d ] = sorted
+        "#{a} #{c} #{d}\n#{b}"
+      num_rows == 1 ->
+        Enum.join(sorted, " ")
+      true ->
+        sorted
+          |> Enum.chunk_every(num_rows)
+          |> rotate(num_rows, 0, [])
+          |> reconstruct
     end
   end
 end
