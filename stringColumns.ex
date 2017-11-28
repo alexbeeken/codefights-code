@@ -124,10 +124,11 @@ IO.inspect StringColumns.stringColumns("a b c d e")
 IO.inspect StringColumns.stringColumns("a b c d e f")
 IO.inspect StringColumns.stringColumns("a b c d e f g")
 IO.inspect StringColumns.stringColumns("ab b c d e fd g hg")
-IO.puts StringColumns.stringColumns("ab b c d e fd g hg") == "ab b  c  \nd  e  fd\ng  hg"
 IO.inspect StringColumns.stringColumns("care elephant pie cat frog pizza")
 IO.puts StringColumns.stringColumns("care elephant pie cat frog pizza") == "care elephant pie  \ncat  frog     pizza"
 IO.inspect StringColumns.stringColumns("apples bananas cheese doritos easter fried god humans ippiwaki")
 IO.inspect StringColumns.min_length(["a", "be", "c", "dee", "e", "f", "gasads"], 0)
 IO.puts StringColumns.stringColumns("a b c d") == "a c d\nb"
 IO.puts StringColumns.stringColumns("ab b c d") == "ab c d\nb "
+IO.inspect StringColumns.stringColumns("ab b c d e fd g hg")
+IO.puts StringColumns.stringColumns("ab b c d e fd g hg") == "ab d  g \nb  e  hg\nc  fd"
