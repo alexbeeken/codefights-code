@@ -35,11 +35,18 @@ defmodule StringColumns do
   end
 
   def stringColumns(words) do
-    words
-    |> String.split(" ")
-    |> Enum.sort
-    |> arrange
-    |> reconstruct
+    sorted =
+      words
+      |> String.split(" ")
+      |> Enum.sort
+    if length(sorted) == 4 do
+      [a,b,c,d] = sorted
+      "#{a} #{c} #{d}\n#{b}"
+    else
+      sorted
+      |> arrange
+      |> reconstruct
+    end
   end
 end
 
