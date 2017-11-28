@@ -27,35 +27,22 @@ defmodule StringColumns do
 
   def reconstruct(_) do "" end
 
-  def arrange(sorted, num_rows, index_offset \\ 0) do
-    if index_offset < num_rows do
+  def arrange(sorted, index_offset \\ 0) do
+    if index_offset < num_rows(sorted) do
       { _offset, offset_sorted } = Enum.split(sorted, index_offset)
-      [ Enum.take_every(offset_sorted, num_rows)
-        | arrange(sorted, num_rows, index_offset + 1) ]
+      [ Enum.take_every(offset_sorted, num_rows(sorted))
+        | arrange(sorted, index_offset + 1) ]
     else
       []
     end
   end
 
   def stringColumns(words) do
-    sorted =
-      words
-      |> String.split(" ")
-      |> Enum.sort
-
-    num_rows = num_rows(sorted)
-
-    cond do
-      length(sorted) == 4 ->
-        [ a, b, c, d ] = sorted
-        "#{a} #{c} #{d}\n#{b}"
-      num_rows == 1 ->
-        Enum.join(sorted, " ")
-      true ->
-        sorted
-          |> arrange(num_rows)
-          |> reconstruct
-    end
+    words
+    |> String.split(" ")
+    |> Enum.sort
+    |> arrange
+    |> reconstruct
   end
 end
 
