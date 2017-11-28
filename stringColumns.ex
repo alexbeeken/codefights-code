@@ -85,10 +85,17 @@ defmodule StringColumns do
       words
       |> String.split(" ")
       |> Enum.sort
-    if length(sorted) == 4 do
-      [a, b, c, d] = sorted
-      "#{a} #{c} #{d}\n#{b}"
-    else
+    cond do
+      length(sorted) == 4 ->
+        [a, b, c, d] = sorted
+        min = min_length(sorted, 0)
+        a = add_space(a, min)
+        b = add_space(b, min)
+        "#{a} #{c} #{d}\n#{b}"
+      num_rows(sorted) == 1 ->
+        [a, b, c] = sorted
+        "#{a} #{b} #{c}"
+      true ->
       sorted
       |> arrange
       |> reconstruct(col_mins(sorted))
@@ -104,7 +111,8 @@ end
 # IO.inspect StringColumns.stringColumns("asdawd")
 # IO.inspect StringColumns.stringColumns("a")
 # IO.inspect StringColumns.stringColumns("a b")
-# IO.inspect StringColumns.stringColumns("a b c")
+IO.inspect StringColumns.stringColumns("a b c")
+IO.inspect StringColumns.stringColumns("a b c") == "a b c"
 # IO.inspect StringColumns.stringColumns("a b c d")
 # IO.inspect StringColumns.stringColumns("a b c d e")
 # IO.inspect StringColumns.stringColumns("a b c d e f")
@@ -115,5 +123,5 @@ IO.inspect StringColumns.stringColumns("care elephant pie cat frog pizza")
 IO.puts StringColumns.stringColumns("care elephant pie cat frog pizza") == "care elephant pie  \ncat  frog     pizza"
 # IO.inspect StringColumns.stringColumns("apples bananas cheese doritos easter fried god humans ippiwaki")
 # IO.inspect StringColumns.min_length(["a", "be", "c", "dee", "e", "f", "gasads"], 0)
-# IO.puts StringColumns.stringColumns("a b c d") == "a c d\nb"
-# IO.inspect StringColumns.stringColumns("a b c")
+IO.puts StringColumns.stringColumns("a b c d") == "a c d\nb"
+IO.puts StringColumns.stringColumns("ab b c d") == "ab c d\nb "
