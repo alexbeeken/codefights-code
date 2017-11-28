@@ -18,11 +18,7 @@ defmodule StringColumns do
   end
 
   def reconstruct([ h | t ]) do
-    if t != [] do
-      Enum.join(h, " ") <> "\n" <> reconstruct(t)
-    else
-      Enum.join(h, " ")
-    end
+    Enum.join(h, " ") <> if t != [], do: "\n#{reconstruct(t)}", else: ""
   end
 
   def arrange(sorted, index_offset \\ 0) do
