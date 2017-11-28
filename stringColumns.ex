@@ -1,12 +1,6 @@
 require IEx
 
 defmodule StringColumns do
-  def new_row(columns, index) do
-    columns
-      |> Enum.map(& Enum.at &1, index )
-      |> Enum.filter(& !is_nil &1 )
-  end
-
   def num_rows(sorted) do
     row_float = length(sorted) / 3
     row_float
@@ -18,12 +12,12 @@ defmodule StringColumns do
     case length(sorted) do
       1 -> 1
       2 -> 2
-      x -> 3
+      true -> 3
     end
   end
 
   def reconstruct([ h | t ]) do
-    if length(h) == 3 && t != [] do
+    if t != [] do
       Enum.join(h, " ") <> "\n" <> reconstruct(t)
     else
       Enum.join(h, " ")
@@ -32,13 +26,12 @@ defmodule StringColumns do
 
   def reconstruct(_) do "" end
 
-  def rotate(columns, num_rows, current_row_idx, output) do
-    if current_row_idx < num_rows do
-      new_row = new_row(columns, current_row_idx)
-      output = List.insert_at(output, current_row_idx, new_row)
-      rotate(columns, num_rows, current_row_idx + 1, output)
+  def arrange(sorted, num_rows, index_offset \\ 0) do
+    if index_offset < num_rows do
+      { _offset, offset_sorted } = Enum.split(sorted, index_offset)
+      [ Enum.take_every(offset_sorted, num_rows) | arrange(sorted, num_rows, index_offset + 1) ]
     else
-      output
+      []
     end
   end
 
@@ -58,8 +51,7 @@ defmodule StringColumns do
         Enum.join(sorted, " ")
       true ->
         sorted
-          |> Enum.chunk_every(num_rows)
-          |> rotate(num_rows, 0, [])
+          |> arrange(num_rows)
           |> reconstruct
     end
   end
@@ -75,10 +67,8 @@ IO.inspect StringColumns.stringColumns("a b c")
 IO.inspect StringColumns.stringColumns("a b c d")
 IO.inspect StringColumns.stringColumns("a b c d e")
 IO.inspect StringColumns.stringColumns("a b c d e f")
+IO.inspect StringColumns.stringColumns("a b c d e f g")
+IO.inspect StringColumns.stringColumns("a b c d e f g h")
+IO.inspect StringColumns.stringColumns("a b c d e f g h i")
 # IO.puts StringColumns.stringColumns("a b c d") == "a c d\nb"
 # IO.inspect StringColumns.stringColumns("a b c")
-IO.inspect StringColumns.num_columns(["a"])
-IO.inspect StringColumns.num_columns(["a", "b"])
-IO.inspect StringColumns.num_columns(["a", "b", "c"])
-IO.inspect StringColumns.num_columns(["a", "b", "c", "d"])
-IO.inspect StringColumns.num_columns(["a", "b", "c", "a", "b", "c", "d"])
