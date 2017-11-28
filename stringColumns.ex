@@ -16,7 +16,7 @@ defmodule StringColumns do
   end
 
   def reconstruct([ h | t ]) do
-    if length(h) == 3 do
+    if length(h) == 3 && t != [] do
       Enum.join(h, " ") <> "\n" <> reconstruct(t)
     else
       Enum.join(h, " ")
@@ -70,6 +70,7 @@ IO.inspect StringColumns.stringColumns("a b")
 IO.inspect StringColumns.stringColumns("a b c")
 IO.inspect StringColumns.stringColumns("a b c d")
 IO.inspect StringColumns.stringColumns("a b c d e")
+IO.inspect StringColumns.stringColumns("a b c d e f")
 # IO.puts StringColumns.stringColumns("a b c d") == "a c d\nb"
 # IO.inspect StringColumns.stringColumns("a b c")
 IO.inspect StringColumns.num_columns(["a"])
