@@ -2,12 +2,9 @@ require IEx
 
 defmodule StringColumns do
   def new_row(columns, index) do
-    [ col1, col2, col3 ] = columns
-    col1_word = Enum.at(col1, index)
-    col2_word = Enum.at(col2, index)
-    col3_word = Enum.at(col3, index)
-    new_row = [ col1_word, col2_word, col3_word ]
-    new_row = Enum.filter(new_row, & !is_nil(&1))
+    columns
+      |> Enum.map(& Enum.at &1, index )
+      |> Enum.filter(& !is_nil &1 )
   end
 
   def num_rows(sorted) do
@@ -37,12 +34,7 @@ defmodule StringColumns do
 
   def rotate(columns, num_rows, current_row_idx, output) do
     if current_row_idx < num_rows do
-      [ col1, col2, col3 ] = columns
-      col1_word = Enum.at(col1, current_row_idx)
-      col2_word = Enum.at(col2, current_row_idx)
-      col3_word = Enum.at(col3, current_row_idx)
-      new_row = [ col1_word, col2_word, col3_word ]
-      new_row = Enum.filter(new_row, & !is_nil(&1))
+      new_row = new_row(columns, current_row_idx)
       output = List.insert_at(output, current_row_idx, new_row)
       rotate(columns, num_rows, current_row_idx + 1, output)
     else
