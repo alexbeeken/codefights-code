@@ -11,11 +11,12 @@ defmodule StringColumns do
 
   def add_space(word, min) do
     num_spaces = min - String.length(word)
-    word <> "#{spaces(num_spaces)}"
+    word <> spaces(num_spaces)
   end
 
   def add_spaces([h | t], min_cols, index) do
-    [ add_space(h, Enum.at(min_cols, 0)) | add_spaces(t, min_cols, index + 1) ]
+    [ add_space(h, Enum.at(min_cols, index))
+      | add_spaces(t, min_cols, index + 1) ]
   end
 
   def add_spaces([], _min_cols, _index) do
@@ -85,7 +86,7 @@ defmodule StringColumns do
       |> String.split(" ")
       |> Enum.sort
     if length(sorted) == 4 do
-      [a,b,c,d] = sorted
+      [a, b, c, d] = sorted
       "#{a} #{c} #{d}\n#{b}"
     else
       sorted
@@ -99,14 +100,20 @@ end
 # IO.puts StringColumns.stringColumns("a b c d e f g h i") == "a d g\nb e h\nc f i"
 # IO.inspect StringColumns.stringColumns("a b c d e f g h")
 # IO.puts StringColumns.stringColumns("a b c d e f g h") == "a d g\nb e h\nc f"
-IO.inspect StringColumns.stringColumns("a")
-IO.inspect StringColumns.stringColumns("a b")
-IO.inspect StringColumns.stringColumns("a b c")
-IO.inspect StringColumns.stringColumns("a b c d")
-IO.inspect StringColumns.stringColumns("a b c d e")
-IO.inspect StringColumns.stringColumns("a b c d e f")
-IO.inspect StringColumns.stringColumns("a b c d e f g")
-IO.inspect StringColumns.stringColumns("a b c d e f g h")
-IO.inspect StringColumns.stringColumns("a b c d e f g h i")
+# IO.inspect StringColumns.stringColumns("")
+# IO.inspect StringColumns.stringColumns("asdawd")
+# IO.inspect StringColumns.stringColumns("a")
+# IO.inspect StringColumns.stringColumns("a b")
+# IO.inspect StringColumns.stringColumns("a b c")
+# IO.inspect StringColumns.stringColumns("a b c d")
+# IO.inspect StringColumns.stringColumns("a b c d e")
+# IO.inspect StringColumns.stringColumns("a b c d e f")
+# IO.inspect StringColumns.stringColumns("a b c d e f g")
+# IO.inspect StringColumns.stringColumns("ab b c d e fd g hg")
+# IO.puts StringColumns.stringColumns("ab b c d e fd g hg") == "ab b  c  \nd  e  fd\ng  hg"
+IO.inspect StringColumns.stringColumns("care elephant pie cat frog pizza")
+IO.puts StringColumns.stringColumns("care elephant pie cat frog pizza") == "care elephant pie  \ncat  frog     pizza"
+# IO.inspect StringColumns.stringColumns("apples bananas cheese doritos easter fried god humans ippiwaki")
+# IO.inspect StringColumns.min_length(["a", "be", "c", "dee", "e", "f", "gasads"], 0)
 # IO.puts StringColumns.stringColumns("a b c d") == "a c d\nb"
 # IO.inspect StringColumns.stringColumns("a b c")
