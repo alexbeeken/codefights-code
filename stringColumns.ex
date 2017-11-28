@@ -1,24 +1,25 @@
 require IEx
 
 defmodule StringColumns do
-  def num_rows(sorted) do
-    sorted
-      |> length
-      |> Kernel./(3)
-      |> Float.ceil
-      |> round
-  end
-
-  def num_columns(sorted) do
-    case length(sorted) do
-      1 -> 1
-      2 -> 2
-      true -> 3
+  def spaces(int) do
+    if int > 0 do
+      " " <> spaces(int - 1)
+    else
+      ""
     end
   end
 
-  def reconstruct([ h | t ]) do
-    Enum.join(h, " ") <> if t != [], do: "\n#{reconstruct(t)}", else: ""
+  def add_space(word, min) do
+    num_spaces = min - String.length(word)
+    word <> "#{spaces(num_spaces)}"
+  end
+
+  def add_spaces([h | t], min_cols, index) do
+    [ add_space(h, Enum.at(min_cols, 0)) | add_spaces(t, min_cols, index + 1) ]
+  end
+
+  def add_spaces([], _min_cols, _index) do
+    []
   end
 
   def arrange(sorted, index_offset \\ 0) do
@@ -34,6 +35,50 @@ defmodule StringColumns do
     end
   end
 
+  def col_mins(sorted) do
+    [ min_length(sorted, 0), min_length(sorted, 1), min_length(sorted, 2) ]
+  end
+
+  def min_length(sorted, col_index) do
+    sorted
+    |> Enum.chunk_every(num_rows(sorted))
+    |> Enum.at(col_index)
+    |> Enum.max_by(&(byte_size(&1)))
+    |> String.length
+  end
+
+  def num_columns(sorted) do
+    case length(sorted) do
+      1 -> 1
+      2 -> 2
+      true -> 3
+    end
+  end
+
+  def num_rows(sorted) do
+    sorted
+      |> length
+      |> Kernel./(3)
+      |> Float.ceil
+      |> round
+  end
+
+  def reconstruct([ h | t ], col_mins) do
+    new_row = add_spaces(h, col_mins, 0)
+    cond do
+      t == [] ->
+        ""
+      length(t) == 1 ->
+        last_row =
+          t
+          |> Enum.at(0)
+          |> add_spaces(col_mins, 0)
+        Enum.join(new_row, " ") <> "\n#{Enum.join(last_row, " ")}"
+      true ->
+        Enum.join(new_row, " ") <> "\n#{reconstruct(t, col_mins)}"
+    end
+  end
+
   def stringColumns(words) do
     sorted =
       words
@@ -45,7 +90,7 @@ defmodule StringColumns do
     else
       sorted
       |> arrange
-      |> reconstruct
+      |> reconstruct(col_mins(sorted))
     end
   end
 end
