@@ -25,12 +25,11 @@ defmodule StringColumns do
     end
   end
 
-  def reconstruct(_) do "" end
-
   def arrange(sorted, index_offset \\ 0) do
-    if index_offset < num_rows(sorted) do
+    num_rows = num_rows(sorted)
+    if index_offset < num_rows do
       { _offset, offset_sorted } = Enum.split(sorted, index_offset)
-      [ Enum.take_every(offset_sorted, num_rows(sorted))
+      [ Enum.take_every(offset_sorted, num_rows)
         | arrange(sorted, index_offset + 1) ]
     else
       []
