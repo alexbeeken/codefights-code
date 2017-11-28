@@ -2,8 +2,9 @@ require IEx
 
 defmodule StringColumns do
   def num_rows(sorted) do
-    row_float = length(sorted) / 3
-    row_float
+    sorted
+      |> length
+      |> Kernel./(3)
       |> Float.ceil
       |> round
   end
@@ -29,7 +30,8 @@ defmodule StringColumns do
   def arrange(sorted, num_rows, index_offset \\ 0) do
     if index_offset < num_rows do
       { _offset, offset_sorted } = Enum.split(sorted, index_offset)
-      [ Enum.take_every(offset_sorted, num_rows) | arrange(sorted, num_rows, index_offset + 1) ]
+      [ Enum.take_every(offset_sorted, num_rows)
+        | arrange(sorted, num_rows, index_offset + 1) ]
     else
       []
     end
