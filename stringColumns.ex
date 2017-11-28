@@ -28,9 +28,11 @@ defmodule StringColumns do
   def arrange(sorted, index_offset \\ 0) do
     num_rows = num_rows(sorted)
     if index_offset < num_rows do
-      { _offset, offset_sorted } = Enum.split(sorted, index_offset)
-      [ Enum.take_every(offset_sorted, num_rows)
-        | arrange(sorted, index_offset + 1) ]
+      row =
+        sorted
+        |> Enum.slice(index_offset..-1)
+        |> Enum.take_every(num_rows)
+      [ row | arrange(sorted, index_offset + 1) ]
     else
       []
     end
