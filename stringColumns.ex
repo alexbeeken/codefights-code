@@ -132,3 +132,5 @@ IO.puts StringColumns.stringColumns("a b c d") == "a c d\nb"
 IO.puts StringColumns.stringColumns("ab b c d") == "ab c d\nb "
 IO.inspect StringColumns.stringColumns("ab b c d e fd g hg")
 IO.puts StringColumns.stringColumns("ab b c d e fd g hg") == "ab d  g \nb  e  hg\nc  fd"
+IO.inspect StringColumns.stringColumns("1 2 c3")
+IO.inspect StringColumns.stringColumns("1 2 c3 5t 6y 7g@2343kn2kjn234324324")
